@@ -20,8 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class PostRequest {
 
-    @NonNull
-    private final RestTemplate restTemplate;
+    /*private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
 
@@ -44,7 +43,7 @@ public class PostRequest {
         }
 
         return response;
-    }
+    }*/
 
 
 }

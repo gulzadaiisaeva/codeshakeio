@@ -20,9 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class GetRequest {
 
-    @Qualifier("appRestTemplate")
-    @NonNull
-    private final RestTemplate restTemplate;
+    /*private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     public <T> Object getJson(String uri, HttpHeaders headers, ParameterizedTypeReference responseType)
@@ -42,5 +40,5 @@ public class GetRequest {
         }
         return response;
     }
-
+*/
 }

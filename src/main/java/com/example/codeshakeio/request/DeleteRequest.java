@@ -19,8 +19,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class DeleteRequest {
 
-    @Qualifier("appRestTemplate")
-    @NonNull private final
+    /*private final
     RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -40,5 +39,5 @@ public class DeleteRequest {
             throw new Exception(e);
         }
         return response;
-    }
+    }*/
 }
