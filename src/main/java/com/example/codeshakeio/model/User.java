@@ -2,6 +2,7 @@
 
 package com.example.codeshakeio.model;
 
+import com.example.codeshakeio.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,24 +39,16 @@ public class User implements Serializable {
     @Column(nullable = false)
     private Long id;
 
-    private String firstName;
+    private String federationId;
 
-    private String lastName;
+    private RoleType roleType;
 
+    private String parentId;
+
+    private String name;
+
+    @Column(name = "email", unique = true)
     private String email;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @CreatedBy
-    private String createdBy;
-
-    @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-
-    @LastModifiedBy
-    private String updatedBy;
 
 }

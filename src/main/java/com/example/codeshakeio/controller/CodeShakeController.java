@@ -2,19 +2,21 @@
 
 package com.example.codeshakeio.controller;
 
+import com.example.codeshakeio.dto.ParentDTO;
+import com.example.codeshakeio.dto.StudentDTO;
+import com.example.codeshakeio.dto.TeacherDTO;
+import com.example.codeshakeio.dto.UserDTO;
 import com.example.codeshakeio.exception.ResourceNotFoundException;
+import com.example.codeshakeio.externalapirequests.GateKeeperApiRequests;
 import com.example.codeshakeio.model.User;
 import com.example.codeshakeio.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The type User controller.
@@ -27,70 +29,122 @@ import java.util.Map;
 public class CodeShakeController {
 
   private final UserRepository userRepository;
+  private final GateKeeperApiRequests gateKeeperApiRequests;
 
   /**
-   * Get all users list.
+   * Get all student list.
    *
    * @return the list
    */
-  @GetMapping("/up")
-  public String  up() {
-    return "hello";
+  @GetMapping("/student")
+  public ResponseEntity<List<StudentDTO>>  getStudents() throws Exception {
+
+    List<StudentDTO> students = gateKeeperApiRequests.getStudentsUsingGET()
+            .orElse(new ArrayList<>());
+
+    return ResponseEntity.ok().body(students);
   }
 
   /**
-   * Gets users by id.
+   * Gets students by id.
    *
-   * @param userId the user id
+   * @param studentId the user id
    * @return the users by id
    * @throws ResourceNotFoundException the resource not found exception
    */
-  @GetMapping("/users/{id}")
-  public ResponseEntity<User> getUsersById(@PathVariable(value = "id") Long userId)
-      throws ResourceNotFoundException {
-    User user =
-        userRepository
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found on :: " + userId));
-    return ResponseEntity.ok().body(user);
+  @GetMapping("/student/{studentId}")
+  public ResponseEntity<StudentDTO>  getStudent(@PathVariable String studentId) throws Exception {
+
+    StudentDTO student = gateKeeperApiRequests.getStudentUsingGET(studentId)
+            .orElseThrow(() -> new ResourceNotFoundException("Student not found on :: " + studentId));
+
+    return ResponseEntity.ok().body(student);
+  }
+
+
+  /**
+   * Get all teacher list.
+   *
+   * @return the list
+   */
+  @GetMapping("/teacher")
+  public ResponseEntity<List<TeacherDTO>>  getTeachers() throws Exception {
+
+    List<TeacherDTO> students = gateKeeperApiRequests.getTeachersUsingGET()
+            .orElse(new ArrayList<>());
+
+    return ResponseEntity.ok().body(students);
+  }
+
+  /**
+   * Gets teacher by id.
+   *
+   * @param teacherId the teacher id
+   * @return the users by id
+   * @throws ResourceNotFoundException the resource not found exception
+   */
+  @GetMapping("/teacher/{teacherId}")
+  public ResponseEntity<TeacherDTO>  getTeacher(@PathVariable String teacherId) throws Exception {
+
+    TeacherDTO students = gateKeeperApiRequests.getTeacherUsingGET(teacherId)
+            .orElseThrow(() -> new ResourceNotFoundException("teacher not found on :: " + teacherId));
+
+    return ResponseEntity.ok().body(students);
+  }
+
+
+  /**
+   * Gets family info by id.
+   *
+   * @param id the family id
+   * @return the users by id
+   * @throws ResourceNotFoundException the resource not found exception
+   */
+  @GetMapping("/person/{id}")
+  public ResponseEntity<ParentDTO>  getPerson(@PathVariable String id) throws Exception {
+
+    ParentDTO students = gateKeeperApiRequests.getPersonUsingGET(id)
+            .orElseThrow(() -> new ResourceNotFoundException("person not found on :: " + id));
+
+    return ResponseEntity.ok().body(students);
+  }
+  /**
+   * Create user user.
+   *
+   * @param id registration the user
+   * @return the user
+   */
+  @PostMapping("/registration/{id}")
+  public String registerUsingPOST(@PathVariable String id) throws Exception {
+    return gateKeeperApiRequests.registerUsingPOST(id)
+            .orElseThrow(() -> new ResourceNotFoundException("registration: " + id));
+  }
+
+  /**
+   * Get all user list.
+   *
+   * @return the list
+   */
+  @GetMapping("/user")
+  public ResponseEntity<List<UserDTO>>  getUsers() throws Exception {
+
+    List<UserDTO> students = gateKeeperApiRequests.getUsersUsingGET()
+            .orElse(new ArrayList<>());
+
+    return ResponseEntity.ok().body(students);
   }
 
   /**
    * Create user user.
    *
-   * @param user the user
+   * @param users registration the user
    * @return the user
    */
-  @PostMapping("/users")
-  public User createUser(@Valid @RequestBody User user) {
-    return userRepository.save(user);
+  @PostMapping("/user")
+  public HttpStatus saveUsersUsingPOST(@RequestBody List<UserDTO> users) throws Exception {
+    return gateKeeperApiRequests.saveUsersUsingPOST(users);
   }
 
-  /**
-   * Update user response entity.
-   *
-   * @param userId the user id
-   * @param userDetails the user details
-   * @return the response entity
-   * @throws ResourceNotFoundException the resource not found exception
-   */
-  @PutMapping("/users/{id}")
-  public ResponseEntity<User> updateUser(
-      @PathVariable(value = "id") Long userId, @Valid @RequestBody User userDetails)
-      throws ResourceNotFoundException {
-
-    User user =
-        userRepository
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found on :: " + userId));
-
-    user.setEmail(userDetails.getEmail());
-    user.setLastName(userDetails.getLastName());
-    user.setFirstName(userDetails.getFirstName());
-    user.setUpdatedAt(new Date());
-    final User updatedUser = userRepository.save(user);
-    return ResponseEntity.ok(updatedUser);
-  }
 
   /**
    * Delete user map.

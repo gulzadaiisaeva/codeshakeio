@@ -1,4 +1,10 @@
 package com.example.codeshakeio.enums;
 
-public class RoleType {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public enum RoleType {
+
+    @JsonProperty("STUDENT") STUDENT,
+    @JsonProperty("TEACHER") TEACHER,
+    @JsonProperty("PARENT") PARENT
 }

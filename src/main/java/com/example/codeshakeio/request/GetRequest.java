@@ -1,44 +1,20 @@
 package com.example.codeshakeio.request;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
-@Slf4j
-@RequiredArgsConstructor
-@Service
-public class GetRequest {
+import java.net.URI;
 
-    /*private final RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
+public interface GetRequest {
 
-    public <T> Object getJson(String uri, HttpHeaders headers, ParameterizedTypeReference responseType)
-            throws Exception {
-        ResponseEntity<? extends Object> response = null;
-        try {
+    WebClient.RequestHeadersSpec<?> webClientBuilder(URI uri, HttpHeaders headers);
 
-            HttpEntity<String> httpentity = new HttpEntity<>(uri, headers);
+    Flux subscribe(URI uri, HttpHeaders headers, Class clazz);
 
-            response = restTemplate.exchange(uri, HttpMethod.GET, httpentity, responseType);
+    <T> ResponseEntity<T> get(URI uri, HttpHeaders headers, TypeReference<T> responseType) throws Exception;
 
-        } catch (HttpStatusCodeException e) {
-            response = ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
-                    .body(e.getResponseBodyAsString());
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-        return response;
-    }
-*/
 }
+
