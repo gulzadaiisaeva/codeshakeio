@@ -10,6 +10,7 @@ import com.example.codeshakeio.exception.ResourceNotFoundException;
 import com.example.codeshakeio.externalapirequests.GateKeeperApiRequests;
 import com.example.codeshakeio.model.User;
 import com.example.codeshakeio.repository.UserRepository;
+import com.example.codeshakeio.scheduled.ScheduledTasks;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ public class CodeShakeController {
 
   private final UserRepository userRepository;
   private final GateKeeperApiRequests gateKeeperApiRequests;
+  private final ScheduledTasks scheduledTasks;
 
   /**
    * Get all student list.
@@ -38,6 +40,16 @@ public class CodeShakeController {
    */
   @GetMapping("/student")
   public ResponseEntity<List<StudentDTO>>  getStudents() throws Exception {
+
+    List<StudentDTO> students = gateKeeperApiRequests.getStudentsUsingGET()
+            .orElse(new ArrayList<>());
+
+    return ResponseEntity.ok().body(students);
+  }
+
+
+  @GetMapping("/syncronization")
+  public ResponseEntity<List<StudentDTO>>  getSyncronization() throws Exception {
 
     List<StudentDTO> students = gateKeeperApiRequests.getStudentsUsingGET()
             .orElse(new ArrayList<>());

@@ -2,6 +2,7 @@ package com.example.codeshakeio.model;
 
 
 import com.example.codeshakeio.enums.OperationStatus;
+import com.example.codeshakeio.enums.OperationType;
 import com.example.codeshakeio.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "synchronization_results")
@@ -25,11 +27,15 @@ public class SynchronizationResults implements Serializable {
     @Column(nullable = false)
     private Long id;
 
+    private String userId;
     private String email;
     private String name;
     private RoleType roleType;
-    private String federationStatus;
+    private String federationId;
+    private String parentId;
 
     private OperationStatus operationStatus;
+    private OperationType operationType;
+    private LocalDateTime processTime;
 
 }

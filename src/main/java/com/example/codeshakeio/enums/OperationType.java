@@ -2,8 +2,8 @@ package com.example.codeshakeio.enums;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public enum OperationStatus {
+public enum OperationType {
 
-    @JsonProperty("DONE") DONE,
-    @JsonProperty("UNDONE") UNDONE
+    @JsonProperty("ADD") ADD,
+    @JsonProperty("DELETE") DELETE
 }
