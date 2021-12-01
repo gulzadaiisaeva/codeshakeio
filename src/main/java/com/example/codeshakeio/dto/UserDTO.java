@@ -23,5 +23,5 @@ public class UserDTO implements Serializable {
     @NotNull
     private String name;
     @NotNull
-    private RoleType roleType;
+    private RoleType role;
 }

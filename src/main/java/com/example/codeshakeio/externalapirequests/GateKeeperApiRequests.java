@@ -162,7 +162,7 @@ public class GateKeeperApiRequests implements InitializingBean {
     }
 
     @SuppressWarnings("unchecked")
-    public HttpStatus saveUsersUsingPOST(List<UserDTO> users) throws Exception {
+    public ResponseEntity<HttpStatus> saveUsersUsingPOST(List<UserDTO> users) throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
         String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/target/user");
 
@@ -176,7 +176,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 });
 
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return response.getBody();
+        return response;
     }
 
     @SuppressWarnings("unchecked")

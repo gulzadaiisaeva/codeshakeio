@@ -1,24 +1,21 @@
 package com.example.codeshakeio.scheduled;
 
 
+import com.example.codeshakeio.common.CommonConstants;
 import com.example.codeshakeio.dto.ParentDTO;
 import com.example.codeshakeio.dto.StudentDTO;
-import com.example.codeshakeio.dto.TeacherDTO;
 import com.example.codeshakeio.dto.UserDTO;
 import com.example.codeshakeio.enums.OperationStatus;
-import com.example.codeshakeio.enums.OperationType;
 import com.example.codeshakeio.externalapirequests.GateKeeperApiRequests;
-import com.example.codeshakeio.mapper.ParentPropertyMapper;
-import com.example.codeshakeio.mapper.StudentPropertyMapper;
-import com.example.codeshakeio.mapper.SynchronizationResultsPropertyMapper;
-import com.example.codeshakeio.mapper.TeacherPropertyMapper;
+import com.example.codeshakeio.mapper.*;
 import com.example.codeshakeio.model.SynchronizationResults;
 import com.example.codeshakeio.repository.SynchronizationResultsRepository;
 import com.example.codeshakeio.utils.JsonUtils;
 import com.example.codeshakeio.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dom4j.rule.Mode;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -37,8 +34,9 @@ public class ScheduledTasks {
     private final SynchronizationResultsRepository synchronizationResultsRepository;
 
     //@Scheduled(cron = "${task-scheduling.cron.run-per-five-minute}")
-    public void checkAndUpdateEdushake() {
-        try{
+    public void checkForNewUpdateEdushake() {
+        log.info(CommonConstants.METHOD_START_MESSAGE);
+        try {
 
             List<UserDTO> allUsers = new ArrayList<>();
 
@@ -55,7 +53,7 @@ public class ScheduledTasks {
                     students,
                     UserDTO.class));
 
-            List<ParentDTO> parents= new ArrayList<>();
+            List<ParentDTO> parents = new ArrayList<>();
             students.forEach(student -> {
                 try {
                     gateKeeperApiRequests.getPersonUsingGET(student.getParentId()).ifPresent(parents::add);
@@ -80,11 +78,23 @@ public class ScheduledTasks {
             log.info(JsonUtils.objectAsJSON(usersToBeDeleted));
             log.info("******************************************************************************\n");
 
-            usersToBeAdded.forEach(user->{
-                if(synchronizationResultsRepository.findByOperationStatusUndone(user.getEmail()).isEmpty()){
+            usersToBeAdded.forEach(user -> {
+                if (synchronizationResultsRepository.findByOperationStatusUndone(user.getEmail()).isEmpty()) {
                     log.info(JsonUtils.objectAsJSON(user));
                     SynchronizationResults synchronizationResults = ModelMapperUtils.map(
-                            ModelMapperUtils.getModelMapper(SynchronizationResultsPropertyMapper.synchronizationResultsMap),
+                            ModelMapperUtils.getModelMapper(SynchronizationResultsAddPropertyMapper.synchronizationResultsMap),
+                            user,
+                            SynchronizationResults.class);
+                    log.info("SynchronizationResults : " + JsonUtils.objectAsJSON(synchronizationResults));
+                    synchronizationResultsRepository.save(synchronizationResults);
+                }
+            });
+
+            usersToBeDeleted.forEach(user -> {
+                if (synchronizationResultsRepository.findByOperationStatusUndone(user.getEmail()).isEmpty()) {
+                    log.info(JsonUtils.objectAsJSON(user));
+                    SynchronizationResults synchronizationResults = ModelMapperUtils.map(
+                            ModelMapperUtils.getModelMapper(SynchronizationResultsDeletePropertyMapper.synchronizationResultsMap),
                             user,
                             SynchronizationResults.class);
                     log.info("SynchronizationResults : " + JsonUtils.objectAsJSON(synchronizationResults));
@@ -93,9 +103,54 @@ public class ScheduledTasks {
             });
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        log.info(CommonConstants.METHOD_END_MESSAGE);
+
+    }
+
+    //@Scheduled(cron = "${task-scheduling.cron.run-per-five-minute}")
+    public void updateEdushake() {
+        log.info(CommonConstants.METHOD_START_MESSAGE);
+        try {
+
+            List<SynchronizationResults> synchronizations = synchronizationResultsRepository.findAllByOperationStatusUnDone();
+
+            if (synchronizations.isEmpty()) {
+                log.info("No data available for sync ");
+            } else {
+
+                synchronizations.forEach(sync -> {
+                    try {
+                        gateKeeperApiRequests.registerUsingPOST(sync.getUserId()).ifPresent(sync::setFederationId);
+                        log.info("Registering using post ended.FederationId of user: {} : {} ", sync.getEmail(), sync.getFederationId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                ResponseEntity<HttpStatus> responseEntity = gateKeeperApiRequests.saveUsersUsingPOST(ModelMapperUtils.mapAll(
+                        ModelMapperUtils.getModelMapper(UserPropertyMapper.userMap
+                        ), synchronizations, UserDTO.class
+                ));
+
+                if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                    log.info("Saving user is successful");
+                    synchronizations.forEach(sync -> {
+                        sync.setProcessTime(LocalDateTime.now());
+                        sync.setOperationStatus(OperationStatus.DONE);
+                        synchronizationResultsRepository.save(sync);
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        log.info(CommonConstants.METHOD_END_MESSAGE);
 
     }
 }

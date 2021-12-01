@@ -54,7 +54,7 @@ public class ObjectMapperConfiguration {
         objectMapper.configure(MapperFeature.AUTO_DETECT_IS_GETTERS, true);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        //objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         objectMapper.configure(SerializationFeature.EAGER_SERIALIZER_FETCH, false);
         objectMapper.writerWithDefaultPrettyPrinter();
         log.info("serializingObjectMapper finished");

@@ -8,7 +8,7 @@ import org.modelmapper.PropertyMap;
 
 import java.time.LocalDateTime;
 
-public class SynchronizationResultsPropertyMapper {
+public class SynchronizationResultsAddPropertyMapper {
 	/**
 	 * source {UserDTO} destination {SynchronizationResults}
 	 */

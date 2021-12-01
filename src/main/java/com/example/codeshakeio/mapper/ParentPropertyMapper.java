@@ -14,7 +14,7 @@ public class ParentPropertyMapper {
 	public final static PropertyMap<ParentDTO, UserDTO> parentPropertyMap = new PropertyMap<ParentDTO, UserDTO>() {
 		protected void configure() {
 
-			map().setRoleType(RoleType.PARENT);
+			map().setRole(RoleType.PARENT);
 
 		}
 	};

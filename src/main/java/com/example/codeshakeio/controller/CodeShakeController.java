@@ -50,15 +50,23 @@ public class CodeShakeController {
   }
 
 
-  @GetMapping("/syncronization")
-  public ResponseEntity<List<SynchronizationResultsDTO>>  getSynchronizationResults() throws Exception {
+  @GetMapping("/syncronization-info")
+  public ResponseEntity<List<SynchronizationResultsDTO>>  getSynchronizationInfos() throws Exception {
 
-    scheduledTasks.checkAndUpdateEdushake();
+    scheduledTasks.checkForNewUpdateEdushake();
     List<SynchronizationResultsDTO> synchronizationResults = ModelMapperUtils.mapAll(
             codeShakeService.getSynchronizationResults(),
             SynchronizationResultsDTO.class);
 
     return ResponseEntity.ok().body(synchronizationResults);
+  }
+
+  @GetMapping("/syncronization")
+  public ResponseEntity<HttpStatus>  doSynchronization() throws Exception {
+
+    scheduledTasks.updateEdushake();
+
+    return ResponseEntity.ok().body(HttpStatus.OK);
   }
 
   /**
@@ -157,7 +165,7 @@ public class CodeShakeController {
    * @return the user
    */
   @PostMapping("/user")
-  public HttpStatus saveUsersUsingPOST(@RequestBody List<UserDTO> users) throws Exception {
+  public ResponseEntity<HttpStatus> saveUsersUsingPOST(@RequestBody List<UserDTO> users) throws Exception {
     return gateKeeperApiRequests.saveUsersUsingPOST(users);
   }
 

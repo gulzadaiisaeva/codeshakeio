@@ -12,7 +12,7 @@ public class StudentPropertyMapper {
 	public final static PropertyMap<StudentDTO, UserDTO> studentPropertyMap = new PropertyMap<StudentDTO, UserDTO>() {
 		protected void configure() {
 
-			map().setRoleType(RoleType.STUDENT);
+			map().setRole(RoleType.STUDENT);
 
 		}
 	};

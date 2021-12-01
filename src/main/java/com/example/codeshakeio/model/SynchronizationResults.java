@@ -31,7 +31,7 @@ public class SynchronizationResults implements Serializable {
     private String email;
     private String name;
     @Enumerated(EnumType.STRING)
-    private RoleType roleType;
+    private RoleType role;
 
     private String federationId;
 

@@ -2,6 +2,7 @@ package com.example.codeshakeio.request.impl;
 
 
 import com.example.codeshakeio.request.PostRequest;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,7 +26,7 @@ public class PostRequestImpl implements PostRequest {
     //WebClient detaylarına aşağıdaki adresten bak
     //https://docs.spring.io/spring/docs/5.0.16.RELEASE/spring-framework-reference/web-reactive.html
 
-    private final RestTemplate restTemplate;
+    private RestTemplate restTemplate = new RestTemplate();
 
     /**
      * Diğer metodlara builder olarak çalışır
@@ -122,13 +123,16 @@ public class PostRequestImpl implements PostRequest {
         try {
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             HttpEntity<Object> entity;
+
             if(null !=json){
                 entity = new HttpEntity<>(json, headers);
             }
             else{
                 entity = new HttpEntity<>(uri.toString(), headers);
             }
-
+            MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
+            jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
             response = restTemplate.exchange(uri, HttpMethod.POST, entity, responseType);
 
         } catch (HttpStatusCodeException e) {
