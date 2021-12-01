@@ -2,15 +2,16 @@
 
 package com.example.codeshakeio.controller;
 
-import com.example.codeshakeio.dto.ParentDTO;
-import com.example.codeshakeio.dto.StudentDTO;
-import com.example.codeshakeio.dto.TeacherDTO;
-import com.example.codeshakeio.dto.UserDTO;
+import com.example.codeshakeio.dto.*;
+import com.example.codeshakeio.enums.OperationStatus;
 import com.example.codeshakeio.exception.ResourceNotFoundException;
 import com.example.codeshakeio.externalapirequests.GateKeeperApiRequests;
 import com.example.codeshakeio.model.User;
+import com.example.codeshakeio.repository.SynchronizationResultsRepository;
 import com.example.codeshakeio.repository.UserRepository;
 import com.example.codeshakeio.scheduled.ScheduledTasks;
+import com.example.codeshakeio.service.CodeShakeService;
+import com.example.codeshakeio.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class CodeShakeController {
 
   private final UserRepository userRepository;
   private final GateKeeperApiRequests gateKeeperApiRequests;
+  private final CodeShakeService codeShakeService;
   private final ScheduledTasks scheduledTasks;
 
   /**
@@ -49,12 +51,14 @@ public class CodeShakeController {
 
 
   @GetMapping("/syncronization")
-  public ResponseEntity<List<StudentDTO>>  getSyncronization() throws Exception {
+  public ResponseEntity<List<SynchronizationResultsDTO>>  getSynchronizationResults() throws Exception {
 
-    List<StudentDTO> students = gateKeeperApiRequests.getStudentsUsingGET()
-            .orElse(new ArrayList<>());
+    scheduledTasks.checkAndUpdateEdushake();
+    List<SynchronizationResultsDTO> synchronizationResults = ModelMapperUtils.mapAll(
+            codeShakeService.getSynchronizationResults(),
+            SynchronizationResultsDTO.class);
 
-    return ResponseEntity.ok().body(students);
+    return ResponseEntity.ok().body(synchronizationResults);
   }
 
   /**

@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.modelmapper.convention.MatchingStrategies;
 
 import java.util.Collection;
 import java.util.List;
@@ -75,12 +76,11 @@ public class ModelMapperUtils {
     /**
      * Maps {@code source} to {@code destination}.
      *
-     * @param source      object to map from
-     * @param destination object to map to
+     * @param entity      object to map from
+     * @param outClass object to map to
      */
-    public <S, D> D map(final ModelMapper modelMapperTmp, final S source, D destination) {
-        modelMapperTmp.map(source, destination);
-        return destination;
+    public <D, T> D map(final ModelMapper modelMapperTmp, final T entity, Class<D> outClass) {
+        return modelMapperTmp.map(entity, outClass);
     }
 
 }
