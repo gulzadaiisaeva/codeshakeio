@@ -27,6 +27,6 @@ public interface SynchronizationResultsRepository extends JpaRepository<Synchron
     @Query(value = "SELECT * FROM synchronization_results t WHERE operation_status= 'DONE'", nativeQuery = true)
     List<SynchronizationResults> findAllByOperationStatusDone();
 
-    @Query(value = "SELECT * FROM synchronization_results t WHERE operation_status= 'UNDONE'", nativeQuery = true)
-    List<SynchronizationResults> findAllByOperationStatusUnDone();
+    @Query(value = "SELECT * FROM synchronization_results t WHERE operation_status= 'UNDONE' and operation_type='ADD'", nativeQuery = true)
+    List<SynchronizationResults> findAllByOperationStatusUnDoneAndAdd();
 }

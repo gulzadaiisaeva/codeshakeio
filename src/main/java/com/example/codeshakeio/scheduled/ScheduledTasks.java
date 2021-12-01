@@ -116,7 +116,7 @@ public class ScheduledTasks {
         log.info(CommonConstants.METHOD_START_MESSAGE);
         try {
 
-            List<SynchronizationResults> synchronizations = synchronizationResultsRepository.findAllByOperationStatusUnDone();
+            List<SynchronizationResults> synchronizations = synchronizationResultsRepository.findAllByOperationStatusUnDoneAndAdd();
 
             if (synchronizations.isEmpty()) {
                 log.info("No data available for sync ");
