@@ -5,8 +5,8 @@ import com.example.codeshakeio.config.ObjectMapperConfiguration;
 import com.example.codeshakeio.enums.resultcode.FailureResultCode;
 import com.example.codeshakeio.exception.unchecked.JsonParseFailException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Strings;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 

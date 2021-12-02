@@ -9,18 +9,18 @@ import org.modelmapper.PropertyMap;
 import java.time.LocalDateTime;
 
 public class SynchronizationResultsDeletePropertyMapper {
-	/**
-	 * source {UserDTO} destination {SynchronizationResults}
-	 */
-	public final static PropertyMap<UserDTO, SynchronizationResults> synchronizationResultsMap = new PropertyMap<UserDTO, SynchronizationResults>() {
-		protected void configure() {
+    /**
+     * source {UserDTO} destination {SynchronizationResults}
+     */
+    public final static PropertyMap<UserDTO, SynchronizationResults> synchronizationResultsMap = new PropertyMap<UserDTO, SynchronizationResults>() {
+        protected void configure() {
 
-			skip(destination.getId());
-			map().setUserId(source.getId());
-			map().setOperationStatus(OperationStatus.UNDONE);
-			map().setOperationType(OperationType.DELETE);
-			map().setInitializingTime(LocalDateTime.now());
+            skip(destination.getId());
+            map().setUserId(source.getId());
+            map().setOperationStatus(OperationStatus.UNDONE);
+            map().setOperationType(OperationType.DELETE);
+            map().setInitializingTime(LocalDateTime.now());
 
-		}
-	};
+        }
+    };
 }

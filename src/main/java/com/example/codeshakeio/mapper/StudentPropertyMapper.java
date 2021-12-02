@@ -6,14 +6,14 @@ import com.example.codeshakeio.enums.RoleType;
 import org.modelmapper.PropertyMap;
 
 public class StudentPropertyMapper {
-	/**
-	 * source {StudentDTO} destination {SynchronizationResults}
-	 */
-	public final static PropertyMap<StudentDTO, UserDTO> studentPropertyMap = new PropertyMap<StudentDTO, UserDTO>() {
-		protected void configure() {
+    /**
+     * source {StudentDTO} destination {SynchronizationResults}
+     */
+    public final static PropertyMap<StudentDTO, UserDTO> studentPropertyMap = new PropertyMap<StudentDTO, UserDTO>() {
+        protected void configure() {
 
-			map().setRole(RoleType.STUDENT);
+            map().setRole(RoleType.STUDENT);
 
-		}
-	};
+        }
+    };
 }

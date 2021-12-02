@@ -76,7 +76,7 @@ public class ModelMapperUtils {
     /**
      * Maps {@code source} to {@code destination}.
      *
-     * @param entity      object to map from
+     * @param entity   object to map from
      * @param outClass object to map to
      */
     public <D, T> D map(final ModelMapper modelMapperTmp, final T entity, Class<D> outClass) {

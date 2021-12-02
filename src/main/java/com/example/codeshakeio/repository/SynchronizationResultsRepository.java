@@ -1,8 +1,6 @@
 package com.example.codeshakeio.repository;
 
-import com.example.codeshakeio.enums.OperationStatus;
 import com.example.codeshakeio.model.SynchronizationResults;
-import com.example.codeshakeio.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

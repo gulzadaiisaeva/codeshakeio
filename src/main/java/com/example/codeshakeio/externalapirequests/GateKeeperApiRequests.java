@@ -7,7 +7,6 @@ import com.example.codeshakeio.dto.StudentDTO;
 import com.example.codeshakeio.dto.TeacherDTO;
 import com.example.codeshakeio.dto.UserDTO;
 import com.example.codeshakeio.enums.resultcode.FailureResultCode;
-import com.example.codeshakeio.enums.resultcode.ResultCode;
 import com.example.codeshakeio.exception.unchecked.ResourceNotFoundException;
 import com.example.codeshakeio.request.CommonRequestResponseService;
 import com.example.codeshakeio.request.DeleteRequest;
@@ -19,15 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,7 +41,6 @@ public class GateKeeperApiRequests implements InitializingBean {
     private String gateKeeperApiBaseUri;
 
 
-
     @Override
     public void afterPropertiesSet() throws Exception {
 
@@ -55,7 +49,7 @@ public class GateKeeperApiRequests implements InitializingBean {
 
     public Optional<List<StudentDTO>> getStudentsUsingGET() throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/source/student");
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/source/student");
 
         log.info("request url: {}", requestUrl);
 
@@ -68,7 +62,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 typeReferenceForResponse
         );
 
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -81,7 +75,7 @@ public class GateKeeperApiRequests implements InitializingBean {
 
     public Optional<StudentDTO> getStudentUsingGET(String id) throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/source/student/",id);
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/source/student/", id);
 
         log.info("request url: {}", requestUrl);
 
@@ -94,7 +88,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 typeReferenceForResponse
         );
 
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -107,7 +101,7 @@ public class GateKeeperApiRequests implements InitializingBean {
 
     public Optional<List<TeacherDTO>> getTeachersUsingGET() throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/source/teacher");
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/source/teacher");
 
         log.info("request url: {}", requestUrl);
 
@@ -119,7 +113,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -133,7 +127,7 @@ public class GateKeeperApiRequests implements InitializingBean {
     public Optional<TeacherDTO> getTeacherUsingGET(String id) throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
 
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/source/teacher/",id);
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/source/teacher/", id);
 
         log.info("request url: {}", requestUrl);
 
@@ -145,7 +139,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -159,7 +153,7 @@ public class GateKeeperApiRequests implements InitializingBean {
     public Optional<ParentDTO> getPersonUsingGET(String id) throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
 
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/government/person/",id);
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/government/person/", id);
 
         log.info("request url: {}", requestUrl);
 
@@ -172,7 +166,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 typeReferenceForResponse
         );
 
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -186,7 +180,7 @@ public class GateKeeperApiRequests implements InitializingBean {
 
     public Optional<List<UserDTO>> getUsersUsingGET() throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/target/user");
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/target/user");
 
         log.info("request url: {}", requestUrl);
 
@@ -199,7 +193,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 typeReferenceForResponse
         );
 
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -214,7 +208,7 @@ public class GateKeeperApiRequests implements InitializingBean {
     @SuppressWarnings("unchecked")
     public ResponseEntity<HttpStatus> saveUsersUsingPOST(List<UserDTO> users) throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/target/user");
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/target/user");
 
         log.info("request url: {}", requestUrl);
 
@@ -225,7 +219,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 new ParameterizedTypeReference<HttpStatus>() {
                 });
 
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -267,7 +261,7 @@ public class GateKeeperApiRequests implements InitializingBean {
     @SuppressWarnings("unchecked")
     public Optional<String> registerUsingPOST(String id) throws Exception {
         log.info(CommonConstants.METHOD_START_MESSAGE);
-        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/federation/registration/",id);
+        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri, "/api/sync/federation/registration/", id);
 
         log.info("request url: {}", requestUrl);
 
@@ -278,7 +272,7 @@ public class GateKeeperApiRequests implements InitializingBean {
                 new ParameterizedTypeReference<String>() {
                 });
 
-        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
             throw ResourceNotFoundException
                     .builder()
                     .message(String.format("%s", responseEntity.getBody()))
@@ -288,7 +282,6 @@ public class GateKeeperApiRequests implements InitializingBean {
         log.info(CommonConstants.METHOD_END_MESSAGE);
         return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
-
 
 
 }

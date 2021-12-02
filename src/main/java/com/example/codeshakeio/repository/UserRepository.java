@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
  * @author Gulzada Iisaeva
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {}
+public interface UserRepository extends JpaRepository<User, Long> {
+}

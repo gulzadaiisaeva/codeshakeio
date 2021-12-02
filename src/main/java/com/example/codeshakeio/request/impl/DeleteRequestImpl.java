@@ -1,22 +1,18 @@
 package com.example.codeshakeio.request.impl;
 
-import com.example.codeshakeio.request.CommonRequestResponseService;
 import com.example.codeshakeio.request.DeleteRequest;
-import com.example.codeshakeio.request.GetRequest;
-import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,19 +39,18 @@ public class DeleteRequestImpl implements DeleteRequest {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Object delete(URI uri,
-                           HttpHeaders headers,
-                           Object json,
-                           ParameterizedTypeReference responseType
+                             HttpHeaders headers,
+                             Object json,
+                             ParameterizedTypeReference responseType
     ) throws Exception {
         ResponseEntity<T> response = null;
 
         try {
             HttpEntity<Object> entity;
 
-            if(null !=json){
+            if (null != json) {
                 entity = new HttpEntity<>(json, headers);
-            }
-            else{
+            } else {
                 entity = new HttpEntity<>(uri.toString(), headers);
             }
             response = restTemplate.exchange(uri, HttpMethod.DELETE, entity, responseType);

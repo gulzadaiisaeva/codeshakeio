@@ -1,9 +1,7 @@
 package com.example.codeshakeio.common;
 
 import com.example.codeshakeio.config.ObjectMapperConfiguration;
-import com.example.codeshakeio.enums.resultcode.FailureResultCode;
 import com.example.codeshakeio.enums.resultcode.ResultCode;
-import com.example.codeshakeio.exception.unchecked.JsonParseFailException;
 import com.example.codeshakeio.exception.unchecked.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

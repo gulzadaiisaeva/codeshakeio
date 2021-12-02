@@ -47,10 +47,9 @@ public class PostRequestImpl implements PostRequest {
         try {
             HttpEntity<Object> entity;
 
-            if(null !=json){
+            if (null != json) {
                 entity = new HttpEntity<>(json, headers);
-            }
-            else{
+            } else {
                 entity = new HttpEntity<>(uri.toString(), headers);
             }
             response = restTemplate.exchange(uri, HttpMethod.POST, entity, responseType);
