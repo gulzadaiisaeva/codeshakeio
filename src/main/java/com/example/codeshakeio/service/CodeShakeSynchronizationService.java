@@ -4,7 +4,12 @@ import com.example.codeshakeio.model.SynchronizationResults;
 
 import java.util.List;
 
-public interface CodeShakeService {
+public interface CodeShakeSynchronizationService {
 
     List<SynchronizationResults> getSynchronizationResults();
+
+    void checkForNewUpdateForEdushake();
+
+    void doSync();
+
 }

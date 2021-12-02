@@ -1,9 +1,9 @@
 package com.example.codeshakeio.request.impl;
 
 import com.example.codeshakeio.request.CommonRequestResponseService;
+import com.example.codeshakeio.request.DeleteRequest;
 import com.example.codeshakeio.request.GetRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,14 +21,12 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class GetRequestImpl implements GetRequest {
+public class DeleteRequestImpl implements DeleteRequest {
     //WebClient Non-Blocking Client
     //WebClient detaylarına aşağıdaki adresten bak
     //https://docs.spring.io/spring/docs/5.0.16.RELEASE/spring-framework-reference/web-reactive.html
 
-    private final CommonRequestResponseService commonRequestResponseService;
-    private final RestTemplate restTemplate;
-
+    private final RestTemplate restTemplate = new RestTemplate();
 
     /**
      * Sync request atmayı sağlar.
@@ -43,28 +41,32 @@ public class GetRequestImpl implements GetRequest {
      * @throws Exception
      */
     @Override
-    public <T> ResponseEntity<T> get(URI uri,
-                                     HttpHeaders headers,
-                                     TypeReference<T> responseType) throws Exception {
+    @SuppressWarnings("unchecked")
+    public <T> Object delete(URI uri,
+                           HttpHeaders headers,
+                           Object json,
+                           ParameterizedTypeReference responseType
+    ) throws Exception {
         ResponseEntity<T> response = null;
-        ResponseEntity<String> responseString = null;
 
         try {
-            HttpEntity<String> httpEntity = new HttpEntity<>(uri.toString(), headers);
-            responseString = restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
+            HttpEntity<Object> entity;
 
-            log.debug("GetRequest Response status: {} - body: {}", responseString.getStatusCode(), responseString.getBody());
-
-            response = commonRequestResponseService.getResponseByType(responseType, responseString);
+            if(null !=json){
+                entity = new HttpEntity<>(json, headers);
+            }
+            else{
+                entity = new HttpEntity<>(uri.toString(), headers);
+            }
+            response = restTemplate.exchange(uri, HttpMethod.DELETE, entity, responseType);
 
         } catch (HttpStatusCodeException e) {
+            log.error(e.getResponseBodyAsString());
             response = (ResponseEntity<T>) ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
                     .body(e.getResponseBodyAsString());
         } catch (Exception e) {
-            log.error("END with ERROR");
             throw new Exception(e);
         }
         return response;
     }
-
 }

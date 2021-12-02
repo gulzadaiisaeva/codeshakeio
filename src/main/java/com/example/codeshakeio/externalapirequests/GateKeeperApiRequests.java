@@ -10,6 +10,7 @@ import com.example.codeshakeio.enums.resultcode.FailureResultCode;
 import com.example.codeshakeio.enums.resultcode.ResultCode;
 import com.example.codeshakeio.exception.unchecked.ResourceNotFoundException;
 import com.example.codeshakeio.request.CommonRequestResponseService;
+import com.example.codeshakeio.request.DeleteRequest;
 import com.example.codeshakeio.request.GetRequest;
 import com.example.codeshakeio.request.PostRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -37,6 +38,7 @@ import java.util.Optional;
 public class GateKeeperApiRequests implements InitializingBean {
 
     private final GetRequest getRequest;
+    private final DeleteRequest deleteRequest;
     private final PostRequest postRequest;
     private final CommonRequestResponseService commonRequestResponseService;
 
@@ -60,14 +62,21 @@ public class GateKeeperApiRequests implements InitializingBean {
         TypeReference<List<StudentDTO>> typeReferenceForResponse = new TypeReference<>() {
         };
 
-        ResponseEntity<List<StudentDTO>> response = getRequest.get(
+        ResponseEntity<List<StudentDTO>> responseEntity = getRequest.get(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
 
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("%s", responseEntity.getBody()))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return Optional.of(Objects.requireNonNull(response.getBody()));
+        return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
 
     public Optional<StudentDTO> getStudentUsingGET(String id) throws Exception {
@@ -79,21 +88,21 @@ public class GateKeeperApiRequests implements InitializingBean {
         TypeReference<StudentDTO> typeReferenceForResponse = new TypeReference<>() {
         };
 
-        ResponseEntity<StudentDTO> response = getRequest.get(
+        ResponseEntity<StudentDTO> responseEntity = getRequest.get(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
 
-        if(!response.getStatusCode().is2xxSuccessful()){
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
             throw ResourceNotFoundException
                     .builder()
-                    .message(String.format("Getting student with %s failed", response))
+                    .message(String.format("%s", responseEntity.getBody()))
                     .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
                     .build();
         }
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return Optional.of(Objects.requireNonNull(response.getBody()));
+        return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
 
     public Optional<List<TeacherDTO>> getTeachersUsingGET() throws Exception {
@@ -105,14 +114,20 @@ public class GateKeeperApiRequests implements InitializingBean {
         TypeReference<List<TeacherDTO>> typeReferenceForResponse = new TypeReference<>() {
         };
 
-        ResponseEntity<List<TeacherDTO>> response = getRequest.get(
+        ResponseEntity<List<TeacherDTO>> responseEntity = getRequest.get(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
-
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("%s", responseEntity.getBody()))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return Optional.of(Objects.requireNonNull(response.getBody()));
+        return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
 
     public Optional<TeacherDTO> getTeacherUsingGET(String id) throws Exception {
@@ -125,14 +140,20 @@ public class GateKeeperApiRequests implements InitializingBean {
         TypeReference<TeacherDTO> typeReferenceForResponse = new TypeReference<>() {
         };
 
-        ResponseEntity<TeacherDTO> response = getRequest.get(
+        ResponseEntity<TeacherDTO> responseEntity = getRequest.get(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
-
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("%s", responseEntity.getBody()))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return Optional.of(Objects.requireNonNull(response.getBody()));
+        return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
 
     public Optional<ParentDTO> getPersonUsingGET(String id) throws Exception {
@@ -145,14 +166,22 @@ public class GateKeeperApiRequests implements InitializingBean {
         TypeReference<ParentDTO> typeReferenceForResponse = new TypeReference<>() {
         };
 
-        ResponseEntity<ParentDTO> response = getRequest.get(
+        ResponseEntity<ParentDTO> responseEntity = getRequest.get(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
 
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("%s", responseEntity.getBody()))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
+
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return Optional.of(Objects.requireNonNull(response.getBody()));
+        return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
 
     public Optional<List<UserDTO>> getUsersUsingGET() throws Exception {
@@ -164,14 +193,22 @@ public class GateKeeperApiRequests implements InitializingBean {
         TypeReference<List<UserDTO>> typeReferenceForResponse = new TypeReference<>() {
         };
 
-        ResponseEntity<List<UserDTO>> response = getRequest.get(
+        ResponseEntity<List<UserDTO>> responseEntity = getRequest.get(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 typeReferenceForResponse
         );
 
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("%s", responseEntity.getBody()))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
+
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return Optional.of(Objects.requireNonNull(response.getBody()));
+        return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
 
     @SuppressWarnings("unchecked")
@@ -181,16 +218,51 @@ public class GateKeeperApiRequests implements InitializingBean {
 
         log.info("request url: {}", requestUrl);
 
-        ResponseEntity<HttpStatus> response = (ResponseEntity<HttpStatus>) postRequest.post(
+        ResponseEntity<HttpStatus> responseEntity = (ResponseEntity<HttpStatus>) postRequest.post(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 users,
                 new ParameterizedTypeReference<HttpStatus>() {
                 });
 
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("%s", responseEntity.getBody()))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return response;
+        return responseEntity;
     }
+
+//    @SuppressWarnings("unchecked")
+//    public ResponseEntity<HttpStatus> deleteUsersUsingPOST(List<String> userIds) throws Exception {
+//        log.info(CommonConstants.METHOD_START_MESSAGE);
+//        String requestUrl = CommonFunctions.concatenateStrings(gateKeeperApiBaseUri,"/api/sync/target/user?userIds=");
+//
+//        Uri uri = uriComponentsBuilder.queryParam("name", "myName");
+//        .build()
+//                .toUri();
+//        log.info("request url: {}", requestUrl);
+//
+//        ResponseEntity<HttpStatus> responseEntity = (ResponseEntity<HttpStatus>) deleteRequest.delete(
+//                new URI(requestUrl),
+//                commonRequestResponseService.prepareHttpHeader(),
+//                users,
+//                new ParameterizedTypeReference<HttpStatus>() {
+//                });
+//
+//        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+//            throw ResourceNotFoundException
+//                    .builder()
+//                    .message(String.format("%s", responseEntity.getBody()))
+//                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+//                    .build();
+//        }
+//        log.info(CommonConstants.METHOD_END_MESSAGE);
+//        return responseEntity;
+//    }
 
     @SuppressWarnings("unchecked")
     public Optional<String> registerUsingPOST(String id) throws Exception {
@@ -199,15 +271,22 @@ public class GateKeeperApiRequests implements InitializingBean {
 
         log.info("request url: {}", requestUrl);
 
-        ResponseEntity<String> response = (ResponseEntity<String>) postRequest.post(
+        ResponseEntity<String> responseEntity = (ResponseEntity<String>) postRequest.post(
                 new URI(requestUrl),
                 commonRequestResponseService.prepareHttpHeader(),
                 new org.json.JSONObject(),
                 new ParameterizedTypeReference<String>() {
                 });
 
+        if(!responseEntity.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("%s", responseEntity.getBody()))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
         log.info(CommonConstants.METHOD_END_MESSAGE);
-        return Optional.of(Objects.requireNonNull(response.getBody()));
+        return Optional.of(Objects.requireNonNull(responseEntity.getBody()));
     }
 
 

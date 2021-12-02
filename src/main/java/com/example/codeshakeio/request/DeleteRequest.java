@@ -14,30 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-@Slf4j
-@RequiredArgsConstructor
-@Service
-public class DeleteRequest {
+import java.net.URI;
 
-    /*private final
-    RestTemplate restTemplate;
-    private final ObjectMapper objectMapper;
 
-    public <T> Object getJson(String uri, HttpHeaders headers, ParameterizedTypeReference responseType)
-            throws Exception {
-        ResponseEntity<? extends Object> response = null;
-        try {
+public interface DeleteRequest {
 
-            HttpEntity<String> httpentity = new HttpEntity<>(uri, headers);
-
-            response = restTemplate.exchange(uri, HttpMethod.DELETE, httpentity, responseType);
-
-        } catch (HttpStatusCodeException e) {
-            response = ResponseEntity.status(e.getRawStatusCode()).headers(e.getResponseHeaders())
-                    .body(e.getResponseBodyAsString());
-        } catch (Exception e) {
-            throw new Exception(e);
-        }
-        return response;
-    }*/
+    <T> Object delete(URI uri, HttpHeaders headers, Object json, ParameterizedTypeReference responseType) throws Exception;
 }

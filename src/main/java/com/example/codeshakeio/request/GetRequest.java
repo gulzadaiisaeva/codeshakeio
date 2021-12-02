@@ -10,11 +10,8 @@ import java.net.URI;
 
 public interface GetRequest {
 
-    WebClient.RequestHeadersSpec<?> webClientBuilder(URI uri, HttpHeaders headers);
-
-    Flux subscribe(URI uri, HttpHeaders headers, Class clazz);
-
     <T> ResponseEntity<T> get(URI uri, HttpHeaders headers, TypeReference<T> responseType) throws Exception;
+
 
 }
 

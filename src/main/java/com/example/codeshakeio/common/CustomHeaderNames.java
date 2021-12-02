@@ -8,11 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CustomHeaderNames {
 
-    // --------REQUEST HEADERS-----------------
-    public static final String REQUEST_USER_ID = "Request_User_Id";
-    public static final String REQUEST_IP = "Request_Ip";
-    public static final String REQUEST_TRANSACTION_ID = "Request_Transaction_Id";
-
     // --------RESPONSE HEADERS-----------------
     public static final String REQUEST_HIT_TIME = "Request_Hit_Time";
     public static final String RESPONSE_TIME = "Response_Time";
