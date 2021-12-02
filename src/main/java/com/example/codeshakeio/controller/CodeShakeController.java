@@ -2,32 +2,39 @@
 
 package com.example.codeshakeio.controller;
 
+import com.example.codeshakeio.common.CommonUtils;
 import com.example.codeshakeio.dto.*;
-import com.example.codeshakeio.exception.ResourceNotFoundException;
+import com.example.codeshakeio.enums.resultcode.FailureResultCode;
+import com.example.codeshakeio.enums.resultcode.SuccessResultCode;
+import com.example.codeshakeio.exception.unchecked.ResourceNotFoundException;
 import com.example.codeshakeio.externalapirequests.GateKeeperApiRequests;
-import com.example.codeshakeio.repository.UserRepository;
 import com.example.codeshakeio.scheduled.ScheduledTasks;
 import com.example.codeshakeio.service.CodeShakeService;
 import com.example.codeshakeio.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The type User controller.
  *
  * @author Gulzada Iisaeva
  */
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/codeshake")
 public class CodeShakeController {
 
-  private final UserRepository userRepository;
   private final GateKeeperApiRequests gateKeeperApiRequests;
   private final CodeShakeService codeShakeService;
   private final ScheduledTasks scheduledTasks;
@@ -37,33 +44,43 @@ public class CodeShakeController {
    *
    * @return the list
    */
-  @GetMapping("/student")
+  @GetMapping(path = "/student", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<StudentDTO>>  getStudents() throws Exception {
+
+    LocalDateTime serviceHitTime = LocalDateTime.now();
 
     List<StudentDTO> students = gateKeeperApiRequests.getStudentsUsingGET()
             .orElse(new ArrayList<>());
 
-    return ResponseEntity.ok().body(students);
+    return CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+            SuccessResultCode.GET_INFO_SUCCESSFUL, students);
   }
 
 
-  @GetMapping("/syncronization-info")
+  @GetMapping(path = "/syncronization-info", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<SynchronizationResultsDTO>>  getSynchronizationInfos() throws Exception {
 
+    LocalDateTime serviceHitTime = LocalDateTime.now();
+
     scheduledTasks.checkForNewUpdateEdushake();
+
     List<SynchronizationResultsDTO> synchronizationResults = ModelMapperUtils.mapAll(
             codeShakeService.getSynchronizationResults(),
             SynchronizationResultsDTO.class);
 
-    return ResponseEntity.ok().body(synchronizationResults);
+    return CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+            SuccessResultCode.GET_INFO_SUCCESSFUL, synchronizationResults);
   }
 
-  @GetMapping("/syncronization")
-  public ResponseEntity<HttpStatus>  doSynchronization() throws Exception {
+  @GetMapping(path = "/syncronization", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Void>  doSynchronization() throws Exception {
+
+    LocalDateTime serviceHitTime = LocalDateTime.now();
 
     scheduledTasks.updateEdushake();
 
-    return ResponseEntity.ok().body(HttpStatus.OK);
+    return CommonUtils.createNoContentResponseEntity(serviceHitTime,
+            LocalDateTime.now(), SuccessResultCode.UPDATE_SUCCESSFUL);
   }
 
   /**
@@ -71,15 +88,23 @@ public class CodeShakeController {
    *
    * @param studentId the user id
    * @return the users by id
-   * @throws ResourceNotFoundException the resource not found exception
+   * @throws Exception the resource not found exception
    */
-  @GetMapping("/student/{studentId}")
+  @GetMapping(path = "/student/{studentId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<StudentDTO>  getStudent(@PathVariable String studentId) throws Exception {
 
-    StudentDTO student = gateKeeperApiRequests.getStudentUsingGET(studentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Student not found on :: " + studentId));
+    LocalDateTime serviceHitTime = LocalDateTime.now();
 
-    return ResponseEntity.ok().body(student);
+    Optional<StudentDTO> student = gateKeeperApiRequests.getStudentUsingGET(studentId);
+
+
+
+    return student
+            .map(studentDTO -> CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+                    SuccessResultCode.GET_INFO_SUCCESSFUL, studentDTO)
+            )
+            .orElseGet(() -> CommonUtils.createResponseEntity(HttpStatus.NOT_FOUND, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(), FailureResultCode.NONEXISTENT_DATA_FAILURE, null)
+            );
   }
 
 
@@ -88,13 +113,15 @@ public class CodeShakeController {
    *
    * @return the list
    */
-  @GetMapping("/teacher")
+  @GetMapping(path = "/teacher", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<TeacherDTO>>  getTeachers() throws Exception {
+    LocalDateTime serviceHitTime = LocalDateTime.now();
 
-    List<TeacherDTO> students = gateKeeperApiRequests.getTeachersUsingGET()
+    List<TeacherDTO> teachers = gateKeeperApiRequests.getTeachersUsingGET()
             .orElse(new ArrayList<>());
 
-    return ResponseEntity.ok().body(students);
+    return CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+            SuccessResultCode.GET_INFO_SUCCESSFUL, teachers);
   }
 
   /**
@@ -102,15 +129,21 @@ public class CodeShakeController {
    *
    * @param teacherId the teacher id
    * @return the users by id
-   * @throws ResourceNotFoundException the resource not found exception
+   * @throws Exception the resource not found exception
    */
-  @GetMapping("/teacher/{teacherId}")
+  @GetMapping(path = "/teacher/{teacherId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<TeacherDTO>  getTeacher(@PathVariable String teacherId) throws Exception {
+    LocalDateTime serviceHitTime = LocalDateTime.now();
 
-    TeacherDTO students = gateKeeperApiRequests.getTeacherUsingGET(teacherId)
-            .orElseThrow(() -> new ResourceNotFoundException("teacher not found on :: " + teacherId));
+    TeacherDTO teacher = gateKeeperApiRequests.getTeacherUsingGET(teacherId)
+            .orElseThrow(() -> ResourceNotFoundException
+                    .builder()
+                    .message(String.format("Getting teacher with %s failed", teacherId))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build());
 
-    return ResponseEntity.ok().body(students);
+    return CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+            SuccessResultCode.GET_INFO_SUCCESSFUL, teacher);
   }
 
 
@@ -119,15 +152,21 @@ public class CodeShakeController {
    *
    * @param id the family id
    * @return the users by id
-   * @throws ResourceNotFoundException the resource not found exception
+   * @throws Exception the resource not found exception
    */
-  @GetMapping("/person/{id}")
+  @GetMapping(path = "/person/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ParentDTO>  getPerson(@PathVariable String id) throws Exception {
+    LocalDateTime serviceHitTime = LocalDateTime.now();
 
-    ParentDTO students = gateKeeperApiRequests.getPersonUsingGET(id)
-            .orElseThrow(() -> new ResourceNotFoundException("person not found on :: " + id));
+    ParentDTO parent = gateKeeperApiRequests.getPersonUsingGET(id)
+            .orElseThrow(() -> ResourceNotFoundException
+                    .builder()
+                    .message(String.format("Getting person with %s failed", id))
+                    .failureResultCode(FailureResultCode.PERSISTENCE_ERROR)
+                    .build());
 
-    return ResponseEntity.ok().body(students);
+    return CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+            SuccessResultCode.GET_INFO_SUCCESSFUL, parent);
   }
   /**
    * Create user user.
@@ -135,10 +174,20 @@ public class CodeShakeController {
    * @param id registration the user
    * @return the user
    */
-  @PostMapping("/registration/{id}")
+  @PostMapping(path = "/registration/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   public String registerUsingPOST(@PathVariable String id) throws Exception {
-    return gateKeeperApiRequests.registerUsingPOST(id)
-            .orElseThrow(() -> new ResourceNotFoundException("registration: " + id));
+
+    LocalDateTime serviceHitTime = LocalDateTime.now();
+
+    String federationId = gateKeeperApiRequests.registerUsingPOST(id)
+            .orElseThrow(() -> ResourceNotFoundException
+                    .builder()
+                    .message(String.format("Registration user with %s failed", id))
+                    .failureResultCode(FailureResultCode.PERSISTENCE_ERROR)
+                    .build());
+
+    return CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+            SuccessResultCode.GET_INFO_SUCCESSFUL, federationId).getBody();
   }
 
   /**
@@ -146,13 +195,15 @@ public class CodeShakeController {
    *
    * @return the list
    */
-  @GetMapping("/user")
+  @GetMapping(path = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<UserDTO>>  getUsers() throws Exception {
+    LocalDateTime serviceHitTime = LocalDateTime.now();
 
-    List<UserDTO> students = gateKeeperApiRequests.getUsersUsingGET()
+    List<UserDTO> users = gateKeeperApiRequests.getUsersUsingGET()
             .orElse(new ArrayList<>());
 
-    return ResponseEntity.ok().body(students);
+    return CommonUtils.createResponseEntity(HttpStatus.OK, HttpHeaders.EMPTY, serviceHitTime, LocalDateTime.now(),
+            SuccessResultCode.GET_INFO_SUCCESSFUL, users);
   }
 
   /**
@@ -161,9 +212,15 @@ public class CodeShakeController {
    * @param users registration the user
    * @return the user
    */
-  @PostMapping("/user")
-  public ResponseEntity<HttpStatus> saveUsersUsingPOST(@RequestBody List<UserDTO> users) throws Exception {
-    return gateKeeperApiRequests.saveUsersUsingPOST(users);
+  @PostMapping(path = "/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Void> saveUsersUsingPOST(@RequestBody List<UserDTO> users) throws Exception {
+
+    LocalDateTime serviceHitTime = LocalDateTime.now();
+
+     gateKeeperApiRequests.saveUsersUsingPOST(users);
+
+    return CommonUtils.createNoContentResponseEntity(serviceHitTime,
+            LocalDateTime.now(), SuccessResultCode.UPDATE_SUCCESSFUL);
   }
 
 

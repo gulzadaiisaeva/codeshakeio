@@ -10,11 +10,6 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 
 public interface PostRequest {
-    <D> WebClient.RequestHeadersSpec<?> webClientBuilder(URI uri, HttpHeaders headers, D json);
-
-    <D> Mono subscribe(URI uri, HttpHeaders headers, D json, ParameterizedTypeReference<?> responseType);
-
-    <D> Mono<ClientResponse> subscribe(URI uri, HttpHeaders headers, D json);
 
     <T> Object post(URI uri, HttpHeaders headers, Object json, ParameterizedTypeReference responseType) throws Exception;
 

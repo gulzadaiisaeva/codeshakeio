@@ -2,102 +2,26 @@ package com.example.codeshakeio.request.impl;
 
 
 import com.example.codeshakeio.request.PostRequest;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class PostRequestImpl implements PostRequest {
-    //WebClient Non-Blocking Client
-    //WebClient detaylarına aşağıdaki adresten bak
-    //https://docs.spring.io/spring/docs/5.0.16.RELEASE/spring-framework-reference/web-reactive.html
 
-    private RestTemplate restTemplate = new RestTemplate();
 
-    /**
-     * Diğer metodlara builder olarak çalışır
-     *
-     * @param uri     istek atılacak olan adress
-     * @param headers eklenmek istenen header içerikleri.
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public <D> WebClient.RequestHeadersSpec<?> webClientBuilder(URI uri, HttpHeaders headers, D json) {
-
-        return WebClient.create()
-                .post()
-                .uri(String.valueOf(uri))
-                .headers(httpHeaders -> httpHeaders.addAll(Optional.ofNullable(headers).orElse(new HttpHeaders())))
-                //.body(json, json.getClass());
-                .bodyValue(json);
-    }
-
-    /**
-     * Async request atmayı sağlar
-     * istek gönderilir ve cevap gelmeden metod biter. İstek geldiğinde cevabı dinlemek için return değerine subscribe olmak gerekir.
-     * örnek kullanımı demoUsage içerisinde mevcut
-     * onStatus metodları ile istenmeyen status dönüşlerinde exception handle edilir ve istenilen sonuç dönülebilir
-     * onStatus burada başlangıç olarak kullanılmıştır ve sadece RuntimeException fırlatılmıştır
-     * dönen cevabın handle edilip uygun dönüşün sağlanması gerekir
-     * NOT: gerekli loglama işlemleri yapılmamıştır Subscribe olunan metod ile birlikte logları sağlanmalıdır.
-     *
-     * @param uri     istek atılacak olan adress
-     * @param headers eklenmek istenen header içerikleri.
-     * @return Flux dinlenmek üzere flux döner. request gerçek anlamda cevap dönmeden return çalışır. flux'ın dinlenmesi gerekir
-     * @throws Exception
-     */
-    @Override
-    public <D> Mono subscribe(URI uri,
-                              HttpHeaders headers,
-                              D json,
-                              ParameterizedTypeReference<?> responseType) {
-        return webClientBuilder(uri, headers, json)
-                .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, clientResponse ->
-                        Mono.error(new RuntimeException())
-                )
-                .onStatus(HttpStatus::is5xxServerError, clientResponse ->
-                        Mono.error(new RuntimeException())
-                )
-                .bodyToMono(responseType);
-    }
-
-    /**
-     * Async request atmayı sağlar
-     * istek gönderilir ve cevap gelmeden metod biter. İstek geldiğinde cevabı dinlemek için return değerine subscribe olmak gerekir.
-     * örnek kullanımı demoUsage içerisinde mevcut
-     * onStatus metodları ile istenmeyen status dönüşlerinde exception handle edilir ve istenilen sonuç dönülebilir
-     * onStatus burada başlangıç olarak kullanılmıştır ve sadece RuntimeException fırlatılmıştır
-     * dönen cevabın handle edilip uygun dönüşün sağlanması gerekir
-     * NOT: gerekli loglama işlemleri yapılmamıştır Subscribe olunan metod ile birlikte logları sağlanmalıdır.
-     *
-     * @param uri     istek atılacak olan adress
-     * @param headers eklenmek istenen header içerikleri.
-     * @return Flux dinlenmek üzere flux döner. request gerçek anlamda cevap dönmeden return çalışır. flux'ın dinlenmesi gerekir
-     * @throws Exception
-     */
-    @Override
-    public <D> Mono<ClientResponse> subscribe(URI uri,
-                                              HttpHeaders headers,
-                                              D json) {
-        return webClientBuilder(uri, headers, json)
-                .exchange();
-    }
+    private final RestTemplate restTemplate;
 
     /**
      * Sync request atmayı sağlar.
@@ -121,7 +45,6 @@ public class PostRequestImpl implements PostRequest {
         ResponseEntity<T> response = null;
 
         try {
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             HttpEntity<Object> entity;
 
             if(null !=json){
@@ -130,9 +53,6 @@ public class PostRequestImpl implements PostRequest {
             else{
                 entity = new HttpEntity<>(uri.toString(), headers);
             }
-            MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
-            jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
             response = restTemplate.exchange(uri, HttpMethod.POST, entity, responseType);
 
         } catch (HttpStatusCodeException e) {

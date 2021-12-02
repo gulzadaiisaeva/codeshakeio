@@ -6,6 +6,9 @@ import com.example.codeshakeio.dto.ParentDTO;
 import com.example.codeshakeio.dto.StudentDTO;
 import com.example.codeshakeio.dto.TeacherDTO;
 import com.example.codeshakeio.dto.UserDTO;
+import com.example.codeshakeio.enums.resultcode.FailureResultCode;
+import com.example.codeshakeio.enums.resultcode.ResultCode;
+import com.example.codeshakeio.exception.unchecked.ResourceNotFoundException;
 import com.example.codeshakeio.request.CommonRequestResponseService;
 import com.example.codeshakeio.request.GetRequest;
 import com.example.codeshakeio.request.PostRequest;
@@ -15,12 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -79,6 +85,13 @@ public class GateKeeperApiRequests implements InitializingBean {
                 typeReferenceForResponse
         );
 
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw ResourceNotFoundException
+                    .builder()
+                    .message(String.format("Getting student with %s failed", response))
+                    .failureResultCode(FailureResultCode.OBJECT_NOT_DEFINED)
+                    .build();
+        }
         log.info(CommonConstants.METHOD_END_MESSAGE);
         return Optional.of(Objects.requireNonNull(response.getBody()));
     }
@@ -196,6 +209,7 @@ public class GateKeeperApiRequests implements InitializingBean {
         log.info(CommonConstants.METHOD_END_MESSAGE);
         return Optional.of(Objects.requireNonNull(response.getBody()));
     }
+
 
 
 }
