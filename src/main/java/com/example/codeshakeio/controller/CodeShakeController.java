@@ -3,11 +3,8 @@
 package com.example.codeshakeio.controller;
 
 import com.example.codeshakeio.dto.*;
-import com.example.codeshakeio.enums.OperationStatus;
 import com.example.codeshakeio.exception.ResourceNotFoundException;
 import com.example.codeshakeio.externalapirequests.GateKeeperApiRequests;
-import com.example.codeshakeio.model.User;
-import com.example.codeshakeio.repository.SynchronizationResultsRepository;
 import com.example.codeshakeio.repository.UserRepository;
 import com.example.codeshakeio.scheduled.ScheduledTasks;
 import com.example.codeshakeio.service.CodeShakeService;
@@ -17,8 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The type User controller.
@@ -170,23 +167,4 @@ public class CodeShakeController {
   }
 
 
-  /**
-   * Delete user map.
-   *
-   * @param userId the user id
-   * @return the map
-   * @throws Exception the exception
-   */
-  @DeleteMapping("/user/{id}")
-  public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId) throws Exception {
-    User user =
-        userRepository
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found on :: " + userId));
-
-    userRepository.delete(user);
-    Map<String, Boolean> response = new HashMap<>();
-    response.put("deleted", Boolean.TRUE);
-    return response;
-  }
 }
