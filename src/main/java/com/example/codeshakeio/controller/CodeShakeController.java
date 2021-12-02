@@ -8,7 +8,6 @@ import com.example.codeshakeio.enums.resultcode.FailureResultCode;
 import com.example.codeshakeio.enums.resultcode.SuccessResultCode;
 import com.example.codeshakeio.exception.unchecked.ResourceNotFoundException;
 import com.example.codeshakeio.externalapirequests.GateKeeperApiRequests;
-import com.example.codeshakeio.scheduled.ScheduledTasks;
 import com.example.codeshakeio.service.CodeShakeSynchronizationService;
 import com.example.codeshakeio.utils.ModelMapperUtils;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ public class CodeShakeController {
 
     private final GateKeeperApiRequests gateKeeperApiRequests;
     private final CodeShakeSynchronizationService codeShakeSynchronizationService;
-    private final ScheduledTasks scheduledTasks;
 
     /**
      * Get all student list.
@@ -54,6 +52,7 @@ public class CodeShakeController {
     }
 
 
+    @CrossOrigin
     @GetMapping(path = "/syncronization-results", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<SynchronizationResultsDTO>> getSynchronizationInfos() throws Exception {
 

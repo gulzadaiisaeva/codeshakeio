@@ -63,14 +63,6 @@ public class CommonUtils {
                 .body(t);
     }
 
-    public static void createAndThrowException(Exception e, String json, FailureResultCode failureResultCode){
-        throw ResourceNotFoundException
-                .builder()
-                .message(String.format("%s", json))
-                .failureResultCode(failureResultCode)
-                .build();
-    }
-
     /**
      * Exception handler lar içinde alınan exception a göre döndürülecek olan http status kodunu belirlemek için yazılan method
      *
